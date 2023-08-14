@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 func main() {
-	fmt.Println(strings.Join(os.Args[0:], " ")) // exercise 1
+	start := time.Now()
+	fmt.Println(strings.Join(os.Args[0:], "\n")) // exercise 1
+	fmt.Println(time.Since(start).Nanoseconds())
 }

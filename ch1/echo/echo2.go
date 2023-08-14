@@ -5,14 +5,19 @@ import (
 	"fmt"
 	"os"
 	"strconv" // exercise 1.2
+	"time"
 )
 
 func main() {
-	s, sep := "", ""
+	start := time.Now()
+
+	s, sep := "", "\n"
+
+	s += os.Args[0] + sep
 	for i, arg := range os.Args[1:] {
-		s += sep + arg 
-		s += sep + strconv.Itoa(i) + arg // exercise 1.2
-		sep = "\n" // exercise 1.2
+		s += strconv.Itoa(i) + " " + arg
+		s += sep
 	}
 	fmt.Println(s)
+	fmt.Println(time.Since(start).Nanoseconds())
 }

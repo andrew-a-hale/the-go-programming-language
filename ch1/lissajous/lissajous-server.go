@@ -29,6 +29,7 @@ func main() {
 		cycles, err := strconv.ParseFloat(r.Form.Get("cycles"), 2)
 		if err != nil {
 			log.Print("cycle not in query or did not parse to float")
+			cycles = 5
 		}
 		lissajous(w, cycles)
 	}) // each request calls handler
@@ -37,7 +38,7 @@ func main() {
 
 func lissajous(out io.Writer, cycles float64) {
 	const (
-		// cycles  = 5 // number of complete x oscillator revolutions
+		//cycles  = 5 // number of complete x oscillator revolutions
 		res     = 0.001 // angular resolution
 		size    = 200   // image canvas
 		nframes = 64    // number of animation frames
