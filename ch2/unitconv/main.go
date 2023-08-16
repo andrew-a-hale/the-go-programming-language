@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"flag"
-	"fmt"
 	"log"
+	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"unitconv/tempconv"
@@ -18,10 +20,25 @@ var (
 
 func main() {
 	flag.Parse()
-	in, err := strconv.ParseFloat(flag.Args()[0], 64)
-	if err != nil {
-		log.Fatal(err)
+	var in float64
+	var err error
+
+	if len(flag.Args()) == 0 {
+		log.Print("enter a number to convert: ")
+		buf := bufio.NewReader(os.Stdin)
+		text, _ := buf.ReadBytes('\n')
+		if match, err := regexp.Match("[0-9]+", text); !match || err != nil {
+			log.Fatal("bad input")
+		}
+		in = float64(text[0])
+	} else {
+		in, err = strconv.ParseFloat(flag.Args()[0], 64)
 	}
+
+	if err != nil {
+		log.Print("no value given to convert")
+	}
+
 	if cIsA(*c, tempconversions) {
 		tempConverter(*c, in)
 	} else if cIsA(*c, weightconversions) {
@@ -32,13 +49,12 @@ func main() {
 }
 
 func cIsA(c string, ctypes []string) bool {
-	var flag bool
 	for _, v := range ctypes {
 		if c == v {
-			flag = true
+			return true
 		}
 	}
-	return flag
+	return false
 }
 
 func tempConverter(c string, in float64) {
@@ -78,5 +94,5 @@ func weightConverter(c string, in float64) {
 }
 
 func formatAndPrint(s ...string) {
-	fmt.Println(strings.Join(s, " => "))
+	log.Println(strings.Join(s, " => "))
 }
