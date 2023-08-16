@@ -34,9 +34,9 @@ func PopCountLoop(x uint64) int {
 }
 
 func PopCountShift(x uint64) int {
-	var count int
-	for i := 0; i < 64; i++ {
-		if x&1 > 0 {
+	count := 0
+	for x > 0 {
+		if x&1 == 1 {
 			count++
 		}
 		x >>= 1
@@ -45,8 +45,8 @@ func PopCountShift(x uint64) int {
 }
 
 func PopCountClear(x uint64) int {
-	var count int
-	for x != 0 {
+	count := 0
+	for x > 0 {
 		x &= x - 1
 		count++
 	}
