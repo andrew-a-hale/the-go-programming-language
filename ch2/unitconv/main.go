@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -20,23 +21,16 @@ var (
 
 func main() {
 	flag.Parse()
-	var in float64
-	var err error
 
-	if len(flag.Args()) == 0 {
+	in, err := strconv.ParseFloat(flag.Arg(0), 64)
+	if err != nil {
 		log.Print("enter a number to convert: ")
 		buf := bufio.NewReader(os.Stdin)
-		text, _ := buf.ReadBytes('\n')
-		if match, err := regexp.Match("[0-9]+", text); !match || err != nil {
+		in_text, _ := buf.ReadBytes('\n')
+		if match, err := regexp.Match("[0-9]+", in_text); !match || err != nil {
 			log.Fatal("bad input")
 		}
-		in = float64(text[0])
-	} else {
-		in, err = strconv.ParseFloat(flag.Args()[0], 64)
-	}
-
-	if err != nil {
-		log.Print("no value given to convert")
+		in = float64(in_text[0])
 	}
 
 	if cIsA(*c, tempconversions) {
@@ -94,5 +88,5 @@ func weightConverter(c string, in float64) {
 }
 
 func formatAndPrint(s ...string) {
-	log.Println(strings.Join(s, " => "))
+	fmt.Println(strings.Join(s, " => "))
 }
