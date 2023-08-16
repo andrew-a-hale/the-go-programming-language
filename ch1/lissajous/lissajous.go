@@ -6,7 +6,6 @@ import (
 	"image/color"
 	"image/gif"
 	"io"
-	"log"
 	"math"
 	"math/rand"
 	"os"
@@ -42,7 +41,7 @@ func lissajous(out io.Writer) {
 		img := image.NewPaletted(rect, palette)
 
 		if i%16 == 0 {
-			lineColor = toggleColour(lineColor)
+			lineColor = cycleColor(lineColor)
 		}
 
 		for t := 0.0; t < cycles*2*math.Pi; t += res {
@@ -59,17 +58,17 @@ func lissajous(out io.Writer) {
 	gif.EncodeAll(out, &anim) // NOTE: ignoring encoding errors
 }
 
-func toggleColour(colorIndex uint8) uint8 {
-	var ret uint8
+func cycleColor(colorIndex uint8) uint8 {
+	// cycle palette avoiding black colorIndex = 0
 
-	switch colorIndex {
-	case greenIndex:
-		ret = redIndex
-	case redIndex:
-		ret = greenIndex
-	default:
-		log.Panic("!")
+	var newColorIndex uint8
+
+	paletteSize := uint8(len(palette) - 1)
+	if colorIndex >= paletteSize {
+		newColorIndex = 1
+	} else {
+		newColorIndex = colorIndex + 1
 	}
 
-	return ret
+	return newColorIndex
 }
