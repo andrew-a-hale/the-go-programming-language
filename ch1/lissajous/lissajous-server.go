@@ -85,14 +85,12 @@ func lissajous(out io.Writer, cycles float64) {
 
 func cycleColor(colorIndex uint8) uint8 {
 	// cycle palette avoiding black colorIndex = 0
-
 	var newColorIndex uint8
+	paletteSize := uint8(len(palette))
 
-	paletteSize := uint8(len(palette) - 1)
-	if colorIndex >= paletteSize {
+	newColorIndex = colorIndex + 1
+	if newColorIndex % paletteSize == 0 {
 		newColorIndex = 1
-	} else {
-		newColorIndex = colorIndex + 1
 	}
 
 	return newColorIndex
