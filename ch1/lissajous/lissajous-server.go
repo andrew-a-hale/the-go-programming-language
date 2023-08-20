@@ -24,11 +24,7 @@ const (
 func main() {
 	// / endpoint
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if err := r.ParseForm(); err != nil {
-			log.Print("invalid form")
-		}
-		var resp []byte = []byte("a good server")
-		w.Write(resp)
+		w.Write([]byte("a good server"))
 	})
 
 	// /gif endpoint
