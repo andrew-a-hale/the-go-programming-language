@@ -45,20 +45,24 @@ func makepng(w io.Writer, r *http.Request, al int64) {
 	img := image.NewRGBA(image.Rect(0, 0, width/2, height/2))
 	for py := 0; py < height/2; py++ {
 		for px := 0; px < width/2; px++ {
-			r1, g1, b1, a1 := compute(al, 2*px, 2*py).RGBA()
-			r2, g2, b2, a2 := compute(al, 2*px, 2*py+1).RGBA()
-			r3, g3, b3, a3 := compute(al, 2*px+1, 2*py).RGBA()
-			r4, g4, b4, a4 := compute(al, 2*px+1, 2*py+1).RGBA()
-			pz := color.RGBA{
-				uint8((r1 + r2 + r3 + r4) / 4),
-				uint8((g1 + g2 + g3 + g4) / 4),
-				uint8((b1 + b2 + b3 + b4) / 4),
-				uint8((a1 + a2 + a3 + a4) / 4),
-			}
-			img.Set(px, py, pz)
+			img.Set(px, py, supersample(al, px, py))
 		}
 	}
 	png.Encode(w, img)
+}
+
+func supersample(al int64, px, py int) color.Color {
+	r1, g1, b1, a1 := compute(al, 2*px, 2*py).RGBA()
+	r2, g2, b2, a2 := compute(al, 2*px, 2*py+1).RGBA()
+	r3, g3, b3, a3 := compute(al, 2*px+1, 2*py).RGBA()
+	r4, g4, b4, a4 := compute(al, 2*px+1, 2*py+1).RGBA()
+
+	return color.RGBA{
+		uint8((r1 + r2 + r3 + r4) / 4),
+		uint8((g1 + g2 + g3 + g4) / 4),
+		uint8((b1 + b2 + b3 + b4) / 4),
+		uint8((a1 + a2 + a3 + a4) / 4),
+	}
 }
 
 func compute(al int64, px, py int) color.Color {
