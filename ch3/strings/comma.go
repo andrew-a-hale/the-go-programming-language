@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	println(buffercomma("123"))
+	println(buffercomma("-123"))
 	println(buffercomma("1234.12"))
 	println(buffercomma("1.12"))
 	println(buffercomma("12.12"))
@@ -28,13 +30,19 @@ func recursivecomma(s string) string {
 func buffercomma(s string) string {
 	var buf bytes.Buffer
 	var n int
-	if strings.ContainsAny(s, "+-") {
-		n = len(s[1:strings.Index(s, ".")])
+
+	if strings.Contains(s, ".") {
+		n = len(s[:strings.Index(s, ".")])
+	} else {
+		n = len(s)
+	}
+
+	if strings.HasPrefix(s, "+") || strings.HasPrefix(s, "-") {
+		n -= 1
 		buf.WriteByte(s[0])
 		s = s[1:]
-	} else {
-		n = len(s[:strings.Index(s, ".")])
 	}
+
 	for i, j := range s {
 		if j == '.' {
 			buf.WriteString(s[i:])
