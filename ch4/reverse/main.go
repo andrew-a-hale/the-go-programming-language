@@ -41,7 +41,5 @@ func reverseByteSlice(x []byte) []byte {
 	}
 
 	// naive reverse
-	x = reverseNaive(x)
-
-	return x
+	return reverseNaive(x)
 }
