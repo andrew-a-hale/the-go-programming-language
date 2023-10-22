@@ -19,24 +19,12 @@ const (
 	USERPAGE      string = "users"
 )
 
-type Data struct {
-	issues     *Issues
-	milestones *Milestones
-	users      *Users
-	cached     bool
-}
-
 var (
 	issues     *Issues     = &Issues{}
 	milestones *Milestones = &Milestones{}
 	users      *Users      = &Users{}
+	cached     bool
 )
-var data = Data{
-	issues:     issues,
-	milestones: milestones,
-	users:      users,
-	cached:     false,
-}
 
 type Issue struct {
 	Number    int       `json:"number"`
@@ -123,7 +111,7 @@ func homeView(w http.ResponseWriter, r *http.Request) {
 }
 
 func cacheData(owner, repo string) {
-	if data.cached {
+	if cached {
 		return
 	}
 
