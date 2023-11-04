@@ -56,12 +56,10 @@ func countWordsAndImages(node *html.Node) (words, images int) {
 	}
 
 	for c := node.FirstChild; c != nil; c = c.NextSibling {
-		isFilteredNode := c.Type == html.ElementNode && (c.Data == "script" || c.Data == "style")
-		if c.Type == html.TextNode || !isFilteredNode {
-			ws, is := countWordsAndImages(c)
-			words, images = words+ws, images+is
-		}
+		ws, is := countWordsAndImages(c)
+		words, images = words+ws, images+is
 	}
+
 	return
 }
 
@@ -73,4 +71,30 @@ func hasLetters(s string) bool {
 	}
 
 	return false
+}
+
+func recCountWordsAndImages(node *html.Node) (words, images int) {
+	if node.Type == html.ElementNode && node.Data == "img" {
+		images++
+	}
+
+	if node.Type == html.TextNode {
+		for _, val := range strings.Fields(node.Data) {
+			if hasLetters(val) {
+				words++
+			}
+		}
+	}
+
+	if node.FirstChild != nil {
+		ws, is := recCountWordsAndImages(node.FirstChild)
+		words, images = words+ws, images+is
+	}
+
+	if node.NextSibling != nil {
+		ws, is := recCountWordsAndImages(node.NextSibling)
+		words, images = words+ws, images+is
+	}
+
+	return
 }
