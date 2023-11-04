@@ -49,13 +49,13 @@ func makesvg(out io.Writer) {
 	out.Write([]byte(svg))
 }
 
-func corner(i, j int) (float64, float64, float64) {
+func corner(i, j int) (sx, sy, z float64) {
 	// Get (x, y, z) for corner
 	x, y, z := xyz(i, j)
 
 	// Project (x, y, z) isometrically onto 2-D SVG canvas (sx, sy).
-	sx := width/2 + (x-y)*cos30*xyscale
-	sy := height/2 + (x+y)*sin30*xyscale - z*zscale
+	sx = width/2 + (x-y)*cos30*xyscale
+	sy = height/2 + (x+y)*sin30*xyscale - z*zscale
 	return sx, sy, z
 }
 
