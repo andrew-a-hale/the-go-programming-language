@@ -7,30 +7,38 @@ import (
 	"golang.org/x/net/html"
 )
 
-var nodeMap = make(map[string]int)
-
 func main() {
 	doc, err := html.Parse(os.Stdin)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "findlinks1: %v\n", err)
 	}
 
-	for k, v := range recVisit(nodeMap, doc) {
+	var total int
+	for k, v := range recVisit(doc) {
 		fmt.Println(k, v)
+		total = total + v
 	}
+	fmt.Printf("total: %d\n", total)
 }
 
-func recVisit(nodeMap map[string]int, n *html.Node) map[string]int {
+func recVisit(n *html.Node) map[string]int {
+	var nodeMap = make(map[string]int)
 	if n.Type == html.ElementNode {
 		nodeMap[n.Data]++
 	}
 
 	if n.FirstChild != nil {
-		recVisit(nodeMap, n.FirstChild)
+		nodes := recVisit(n.FirstChild)
+		for k, v := range nodes {
+			nodeMap[k] = nodeMap[k] + v
+		}
 	}
 
 	if n.NextSibling != nil {
-		recVisit(nodeMap, n.NextSibling)
+		nodes := recVisit(n.NextSibling)
+		for k, v := range nodes {
+			nodeMap[k] = nodeMap[k] + v
+		}
 	}
 	
 	return nodeMap
