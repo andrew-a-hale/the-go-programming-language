@@ -9,8 +9,6 @@ import (
 	"golang.org/x/net/html"
 )
 
-var calls int
-
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatalf("missing url")
@@ -30,7 +28,6 @@ func main() {
 	}
 
 	forEachNode(doc, id, ElementById)
-	fmt.Println("calls:", calls)
 }
 
 func forEachNode(n *html.Node, id string, pre func(n *html.Node, id string) *html.Node) (found *html.Node) {
@@ -50,8 +47,6 @@ func forEachNode(n *html.Node, id string, pre func(n *html.Node, id string) *htm
 }
 
 func ElementById(doc *html.Node, id string) *html.Node {
-	calls++
-
 	for _, attrs := range doc.Attr {
 		if attrs.Key == "id" && attrs.Val == id {
 			return doc
