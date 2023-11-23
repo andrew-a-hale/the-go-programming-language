@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"mime"
 	"net/http"
 	"os"
+	"strings"
 
 	"golang.org/x/net/html"
 )
@@ -38,6 +41,7 @@ func extract(url string) ([]string, error) {
 		return nil, fmt.Errorf("parsing %s as html: %v", url, err)
 	}
 
+	domain := strings.Split(url, "/")[2]
 	var links []string
 	visitNode := func(n *html.Node) {
 		if n.Type == html.ElementNode && n.Data == "a" {
@@ -45,12 +49,39 @@ func extract(url string) ([]string, error) {
 				if a.Key != "href" {
 					continue
 				}
+
 				link, err := resp.Request.URL.Parse(a.Val)
-				// make dir for domain
-				// get html for url with name as last segment of url
 				if err != nil {
 					continue
 				}
+
+				linkString, _ := strings.CutSuffix(link.String(), "/")
+				segments := strings.Split(linkString, "/")[2:]
+				if segments[0] == domain && len(segments) > 1 {
+					// make dir for domain
+					dir := strings.Join(segments[:len(segments)-1], "/")
+					err := os.MkdirAll(dir, 0755)
+					if err != nil {
+						fmt.Printf("failed to create file for %s: %s\n", dir, err)
+						continue
+					}
+
+					// get html for url with name as last segment of url
+					resp, err := http.Get(link.String())
+					if err != nil || resp.StatusCode != http.StatusOK {
+						continue
+					}
+
+					content, _ := io.ReadAll(resp.Body)
+					fileExt, _ := mime.ExtensionsByType(resp.Header.Get("Content-Type"))
+					err = os.WriteFile(strings.Join(segments, "/")+fileExt[0], content, 0755)
+					if err != nil {
+						fmt.Printf("failed to write file %s: %s\n", segments, err)
+					}
+
+					resp.Body.Close()
+				}
+
 				links = append(links, link.String())
 			}
 		}
